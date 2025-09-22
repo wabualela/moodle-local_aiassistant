@@ -24,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/repository/lib.php');
-
 function local_aiassistant_before_footer() {
 	global $PAGE;
 
