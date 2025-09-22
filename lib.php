@@ -35,8 +35,6 @@ function local_aiassistant_before_footer() {
 		return;
 	}
 
-	// Add custom CSS for the AI Assistant plugin.
-	$PAGE->requires->css('/local/aiassistant/styles.css');
     $PAGE->requires->js_call_amd('local_aiassistant/assistant', 'init');
 
 }
