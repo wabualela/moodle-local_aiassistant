@@ -15,26 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin functions for the local_aiassistant plugin.
+ * Hook callbacks for AI Assistant
  *
- * @package   local_aiassistant
- * @copyright 2025, Wail Abualela wailabualela@alborhan.sa
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_aiassistant
+ * @copyright  2025 Wail Abualela
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-function local_aiassistant_before_footer() {
-	global $PAGE;
-
-	if (!get_config('local_aiassistant', 'enable')) {
-		return;
-	}
-
-	if (!has_capability('local/aiassistant:view', context_system::instance())) {
-		return;
-	}
-
-    $PAGE->requires->js_call_amd('local_aiassistant/assistant', 'init');
-
-}
+$callbacks = [
+    [
+        'hook' => \core\hook\output\before_standard_footer_html_generation::class,
+        'callback' => \local_aiassistant\hook_callbacks::class . '::standard_footer_html',
+    ],
+];
