@@ -1,0 +1,72 @@
+.fab-wrapper {
+  position: fixed;
+  bottom: 20px;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inset-inline-start: 20px;
+  flex-direction: row;
+}
+/* FAB button */
+.fab-ai {
+  width: 60px; height: 60px; border-radius: 50%;
+  font-size: 24px;
+  background-color: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,.3);
+  cursor: pointer; transition: background-color .3s ease;
+}
+.fab-ai:hover { background-color: var(--primary); }
+
+/* Hover label */
+.fab-label {
+  background-color: var(--primary);
+  color: #fff; font-size: 14px;
+  padding: 6px 12px; border-radius: 20px;
+  white-space: nowrap;
+  opacity: 0; transition: all .3s ease;
+}
+/* RTL: label on the RIGHT of the FAB */
+:dir(rtl) .fab-label { margin-left: 10px; transform: translateX(10px); }
+/* LTR: label on the LEFT of the FAB */
+:dir(ltr) .fab-label { margin-right: 10px; transform: translateX(-10px); }
+
+.fab-wrapper:hover .fab-label { opacity: 1; transform: translateX(0); }
+
+/* Chatbox */
+.chatbox {
+  position: fixed; bottom: 100px;
+  width: 300px; max-height: 400px;
+  background: #fff; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,.3);
+  display: none; flex-direction: column;
+  z-index: 1051;
+}
+/* Keep your latest positions */
+:dir(rtl) .chatbox { right: 30px; }
+:dir(ltr) .chatbox { left: 30px; }
+
+.chatbox.is-open { display: flex; }
+
+.chatbox-header {
+  background: var(--primary); color: #fff;
+  padding: 10px; font-weight: bold;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.chatbox-body   { flex: 1; padding: 10px; overflow-y: auto; font-size: 14px; }
+.chatbox-footer { padding: 10px; border-top: 1px solid #ccc; background: #f8f8f8; }
+.chatbox-footer input { width: 100%; padding: 8px; }
+.chat-message { margin-bottom: 10px; display: block; }
+.chat-message.ai { color: var(--primary); font-weight: bold; }
+
+/* Small screens */
+@media (max-width: 420px) {
+  .chatbox { width: calc(100vw - 60px); max-height: 60vh; }
+}
+
+.fab-ai img.fab-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}

@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,35 +13,38 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_aiassistant;
-
-
-use html_writer;
-use moodle_url;
-
 /**
- * Class hook_callbacks
+ * Floating Action Button (FAB) for AI Assistant.
  *
- * @package    local_aiassistant
+ * @module     local_aiassistant/fab
  * @copyright  2025 Wail Abualela
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class hook_callbacks
-{
 
-    /**
-     * Add the privacy summary to the footer.
-     *
-     * @param \core\hook\output\before_standard_footer_html_generation $hook
-     */
-    public static function standard_footer_html(\core\hook\output\before_standard_footer_html_generation $hook): void {
-        global $OUTPUT;
+define(['jquery'], function($) {
+    return {
+        init: function() {
+            // Avoid injecting more than once
+            if ($('#ai-fab-button').length > 0) {
+                return;
+            }
 
-        $hook->add_html(
-            $OUTPUT->render_from_template('local_aiassistant/ai_fab', [
+            // Create the FAB element
+            const fab = $(`
+                <div id="ai-fab-button" title="Ask the Assistant">
+                    💬
+                </div>
+            `);
 
-            ]),
-        );
+            // Append to body
+            $('body').append(fab);
 
-    }
-}
+            window.console.log('AI Assistant FAB initialized.');
+
+            // Optional: Click handler
+            fab.on('click', function() {
+                alert('AI Assistant coming soon!');
+            });
+        }
+    };
+});
