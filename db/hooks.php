@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => \core\hook\output\before_standard_footer_html_generation::class,
-        'callback' => \local_aiassistant\hook_callbacks::class . '::standard_footer_html',
+        'hook' => \core\hook\output\after_standard_main_region_html_generation::class,
+        'callback' => \local_aiassistant\hook_callbacks::class . '::add_fab',
     ],
 ];

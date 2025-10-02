@@ -31,18 +31,18 @@ class hook_callbacks
 {
 
     /**
-     * Add the privacy summary to the footer.
+     * Add messaging widgets after the main region content.
      *
-     * @param \core\hook\output\before_standard_footer_html_generation $hook
+     * @param \core\hook\output\after_standard_main_region_html_generation $hook
      */
-    public static function standard_footer_html(\core\hook\output\before_standard_footer_html_generation $hook): void {
+    public static function add_fab(
+        \core\hook\output\after_standard_main_region_html_generation $hook,
+        ): void {
         global $OUTPUT;
-
         $hook->add_html(
             $OUTPUT->render_from_template('local_aiassistant/ai_fab', [
-
+                'iconurl' => (new moodle_url('/local/aiassistant/pix/sheikh.svg'))->out(false),
             ]),
         );
-
     }
 }

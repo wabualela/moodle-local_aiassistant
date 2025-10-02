@@ -32,4 +32,5 @@ $string['chatplaceholder'] = 'اسألني أي شيء عن هذه الصفحة.
 $string['chatloading']     = 'المساعد يفكر...';
 $string['send']            = 'إرسال';
 $string['closechat']       = 'إغلاق الدردشة';
+$string['ai_labeltext']    = 'المساعد الذكي';
     

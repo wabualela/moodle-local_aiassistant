@@ -32,3 +32,4 @@ $string['chatplaceholder'] = 'Ask me anything about this page...';
 $string['chatloading']     = 'The assistant is thinking...';
 $string['send']            = 'Send';
 $string['closechat']       = 'Close chat';
+$string['ai_labeltext']    = 'AI Assistant';
