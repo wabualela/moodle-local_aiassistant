@@ -16,7 +16,6 @@
 
 namespace local_aiassistant;
 
-
 use html_writer;
 use moodle_url;
 
@@ -31,18 +30,42 @@ class hook_callbacks
 {
 
     /**
-     * Add messaging widgets after the main region content.
+     * Add AI assistant FAB and chat interface after the main region content.
      *
      * @param \core\hook\output\after_standard_main_region_html_generation $hook
      */
     public static function add_fab(
         \core\hook\output\after_standard_main_region_html_generation $hook,
         ): void {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
+
+        // Check if the assistant is enabled.
+        if (!get_config('local_aiassistant', 'enable')) {
+            return;
+        }
+
+        // Don't show on login page or during installation.
+        if ($PAGE->pagelayout === 'login' || during_initial_install()) {
+            return;
+        }
+
+        // Initialize the JavaScript module.
+        $PAGE->requires->js_call_amd('local_aiassistant/chat', 'init');
+
+        // Prepare context for templates.
+        $context = [
+            'iconurl' => (new moodle_url('/local/aiassistant/pix/sheikh.svg'))->out(false),
+            'current_time' => userdate(time(), get_string('strftimetime', 'core_langconfig')),
+        ];
+
+        // Add the FAB button.
         $hook->add_html(
-            $OUTPUT->render_from_template('local_aiassistant/ai_fab', [
-                'iconurl' => (new moodle_url('/local/aiassistant/pix/sheikh.svg'))->out(false),
-            ]),
+            $OUTPUT->render_from_template('local_aiassistant/fab', $context)
+        );
+
+        // Add the chat interface (hidden by default).
+        $hook->add_html(
+            $OUTPUT->render_from_template('local_aiassistant/chat', $context)
         );
     }
 }

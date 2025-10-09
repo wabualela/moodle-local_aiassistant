@@ -1,72 +1,383 @@
-.fab-wrapper {
-  position: fixed;
-  bottom: 20px;
-  z-index: 1050;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  inset-inline-start: 20px;
-  flex-direction: row;
-}
-/* FAB button */
-.fab-ai {
-  width: 60px; height: 60px; border-radius: 50%;
-  font-size: 24px;
-  background-color: var(--primary); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,.3);
-  cursor: pointer; transition: background-color .3s ease;
-}
-.fab-ai:hover { background-color: var(--primary); }
+/* 
+ * Moodle AI Assistant Styling
+ * This styling incorporates modern chat interface design with Moodle theming
+ */
 
-/* Hover label */
-.fab-label {
-  background-color: var(--primary);
-  color: #fff; font-size: 14px;
-  padding: 6px 12px; border-radius: 20px;
-  white-space: nowrap;
-  opacity: 0; transition: all .3s ease;
-}
-/* RTL: label on the RIGHT of the FAB */
-:dir(rtl) .fab-label { margin-left: 10px; transform: translateX(10px); }
-/* LTR: label on the LEFT of the FAB */
-:dir(ltr) .fab-label { margin-right: 10px; transform: translateX(-10px); }
-
-.fab-wrapper:hover .fab-label { opacity: 1; transform: translateX(0); }
-
-/* Chatbox */
-.chatbox {
-  position: fixed; bottom: 100px;
-  width: 300px; max-height: 400px;
-  background: #fff; border-radius: 10px; overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0,0,0,.3);
-  display: none; flex-direction: column;
-  z-index: 1051;
-}
-/* Keep your latest positions */
-:dir(rtl) .chatbox { right: 30px; }
-:dir(ltr) .chatbox { left: 30px; }
-
-.chatbox.is-open { display: flex; }
-
-.chatbox-header {
-  background: var(--primary); color: #fff;
-  padding: 10px; font-weight: bold;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.chatbox-body   { flex: 1; padding: 10px; overflow-y: auto; font-size: 14px; }
-.chatbox-footer { padding: 10px; border-top: 1px solid #ccc; background: #f8f8f8; }
-.chatbox-footer input { width: 100%; padding: 8px; }
-.chat-message { margin-bottom: 10px; display: block; }
-.chat-message.ai { color: var(--primary); font-weight: bold; }
-
-/* Small screens */
-@media (max-width: 420px) {
-  .chatbox { width: calc(100vw - 60px); max-height: 60vh; }
+/* Base variables that will work with Moodle themes */
+:root {
+    --aiassistant-primary: var(--primary, #0f6cbf);
+    --aiassistant-primary-light: var(--primary-light, #e6f0fa);
+    --aiassistant-text-light: #ffffff;
+    --aiassistant-bg: #ffffff;
+    --aiassistant-border: #e0e0e0;
+    --aiassistant-message-ai: var(--aiassistant-primary-light);
+    --aiassistant-message-user: #f0f0f0;
+    --aiassistant-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --aiassistant-radius: 10px;
+    --aiassistant-transition: all 0.3s ease;
+    --aiassistant-footer-bg: #f8f8f8;
+    --aiassistant-input-bg: #ffffff;
+    --aiassistant-input-border: #e0e0e0;
+    --aiassistant-z-index: 1050;
 }
 
-.fab-ai img.fab-icon {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+/* ---------- FAB Button Styling ---------- */
+
+.local-aiassistant-fab-wrapper {
+    position: fixed; /* Changed from absolute to fixed so it stays in place when scrolling */
+    bottom: 80px;
+    z-index: var(--aiassistant-z-index);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    inset-inline-end: 20px; /* RTL-friendly positioning - switched to right side with 80px spacing */
+    flex-direction: row;
+    transition: var(--aiassistant-transition);
+}
+
+.local-aiassistant-fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--aiassistant-primary);
+    color: var(--aiassistant-text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--aiassistant-shadow);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0s;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+}
+
+.local-aiassistant-fab.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
+}
+
+.local-aiassistant-fab:hover:not(.is-hidden) {
+    transform: scale(1.05);
+}
+
+.local-aiassistant-fab:focus {
+    outline: 2px solid var(--aiassistant-primary);
+    outline-offset: 2px;
+}
+
+.local-aiassistant-fab-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.local-aiassistant-fab-label {
+    background-color: var(--aiassistant-primary);
+    color: var(--aiassistant-text-light);
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--aiassistant-transition);
+    position: absolute;
+}
+
+/* LTR: FAB on right side, label appears to its left */
+:dir(ltr) .local-aiassistant-fab-label {
+    right: 70px; /* Position to the left of FAB */
+    transform: translateX(10px);
+}
+
+/* RTL: FAB on left side, label appears to its right */
+:dir(rtl) .local-aiassistant-fab-label {
+    right: 70px; /* Position to the right of FAB */
+    transform: translateX(-10px);
+}
+
+.local-aiassistant-fab-wrapper:hover .local-aiassistant-fab-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ---------- Chat Interface Styling ---------- */
+
+.local-aiassistant-chat {
+    position: fixed;
+    bottom: 90px;
+    inset-inline-end: 20px; /* Position on right side (in LTR), left side (in RTL) - matches FAB position */
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 600px;
+    max-height: calc(100vh - 120px);
+    background-color: var(--aiassistant-bg);
+    border-radius: var(--aiassistant-radius);
+    box-shadow: var(--aiassistant-shadow);
+    display: flex;
+    flex-direction: column;
+    z-index: calc(var(--aiassistant-z-index) + 1);
+    overflow: hidden;
+    visibility: hidden; /* Hidden by default, shown by JavaScript */
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
+}
+
+.local-aiassistant-chat.is-visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0s;
+}
+
+.local-aiassistant-chat-header {
+    background-color: var(--aiassistant-primary);
+    color: var(--aiassistant-text-light);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: var(--aiassistant-radius);
+    border-top-right-radius: var(--aiassistant-radius);
+}
+
+.local-aiassistant-chat-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.local-aiassistant-chat-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.local-aiassistant-chat-controls .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--aiassistant-text-light);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: var(--aiassistant-transition);
+    font-size: 16px;
+}
+
+.local-aiassistant-chat-controls .btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.local-aiassistant-chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.local-aiassistant-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    animation: messageSlideIn 0.2s ease-out;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.local-aiassistant-message-user {
+    align-self: flex-end;
+}
+
+.local-aiassistant-message-ai {
+    align-self: flex-start;
+}
+
+.local-aiassistant-message-content {
+    padding: 10px 14px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.local-aiassistant-message-user .local-aiassistant-message-content {
+    background-color: var(--aiassistant-primary);
+    color: var(--aiassistant-text-light);
+    border-bottom-right-radius: 4px;
+}
+
+.local-aiassistant-message-ai .local-aiassistant-message-content {
+    background-color: var(--aiassistant-message-ai);
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+.local-aiassistant-message-time {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+    padding: 0 4px;
+}
+
+.local-aiassistant-message-user .local-aiassistant-message-time {
+    text-align: right;
+}
+
+/* Typing indicator */
+.local-aiassistant-typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 10px 14px;
+    background-color: var(--aiassistant-message-ai);
+    border-radius: 12px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+}
+
+.local-aiassistant-typing-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #999;
+    animation: typingDot 1.4s infinite;
+}
+
+.local-aiassistant-typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.local-aiassistant-typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.local-aiassistant-chat-footer {
+    padding: 15px;
+    background-color: var(--aiassistant-footer-bg);
+    border-top: 1px solid var(--aiassistant-border);
+    border-bottom-left-radius: var(--aiassistant-radius);
+    border-bottom-right-radius: var(--aiassistant-radius);
+}
+
+.local-aiassistant-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--aiassistant-input-bg);
+    border: 1px solid var(--aiassistant-input-border);
+    border-radius: 24px;
+    padding: 4px 8px;
+}
+
+.local-aiassistant-input-wrapper .btn-icon {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--aiassistant-transition);
+    font-size: 16px;
+}
+
+.local-aiassistant-input-wrapper .btn-icon:hover {
+    background-color: #f0f0f0;
+    color: var(--aiassistant-primary);
+}
+
+.local-aiassistant-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 4px;
+    font-size: 14px;
+    background: transparent;
+}
+
+.local-aiassistant-send {
+    color: var(--aiassistant-primary) !important;
+}
+
+.local-aiassistant-send:hover {
+    background-color: var(--aiassistant-primary-light) !important;
+}
+
+.local-aiassistant-branding {
+    text-align: center;
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .local-aiassistant-chat {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 120px);
+        inset-inline-end: 10px; /* Reduce spacing on mobile */
+    }
+
+    .local-aiassistant-fab-wrapper {
+        inset-inline-end: 10px; /* Reduce spacing on mobile */
+        bottom: 10px;
+    }
+}
+
+/* RTL support */
+:dir(rtl) .local-aiassistant-message-user .local-aiassistant-message-content {
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 4px;
+}
+
+:dir(rtl) .local-aiassistant-message-ai .local-aiassistant-message-content {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 4px;
+}
+
+/* ---------- Accessibility ---------- */
+
+/* Additional focus styles for accessibility */
+.local-aiassistant-fab:focus-visible,
+.btn-icon:focus-visible {
+    outline: 2px solid var(--aiassistant-primary);
+    outline-offset: 2px;
+}
+
+/* Ensure proper contrast for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }

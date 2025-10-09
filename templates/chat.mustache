@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_aiassistant/chat
+
+    Chat interface for AI Assistant
+
+    Example context (json):
+    {
+        "current_time": "10:30 AM"
+    }
+}}
+<div class="local-aiassistant-chat" id="local-aiassistant-chat" aria-live="polite">
+    <div class="local-aiassistant-chat-header">
+        <h3 class="local-aiassistant-chat-title">{{#str}}assistant_name, local_aiassistant{{/str}}</h3>
+        <div class="local-aiassistant-chat-controls">
+            <button class="local-aiassistant-chat-options btn-icon" aria-label="{{#str}}options, local_aiassistant{{/str}}">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <button class="local-aiassistant-chat-close btn-icon" aria-label="{{#str}}close, local_aiassistant{{/str}}">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="local-aiassistant-chat-body" id="local-aiassistant-messages">
+        <!-- Welcome message will be the first message -->
+        <div class="local-aiassistant-message local-aiassistant-message-ai">
+            <div class="local-aiassistant-message-content">
+                {{#str}}welcome_message, local_aiassistant{{/str}}
+            </div>
+            <div class="local-aiassistant-message-time">{{current_time}}</div>
+        </div>
+        
+        <!-- Messages will be added here dynamically -->
+    </div>
+    
+    <!-- Quick reply buttons (optional, similar to the language selection in your example) -->
+    <div class="local-aiassistant-quick-replies" id="local-aiassistant-quick-replies">
+        <!-- Will be populated by JavaScript when needed -->
+    </div>
+    
+    <div class="local-aiassistant-chat-footer">
+        <div class="local-aiassistant-input-wrapper">
+            <button class="local-aiassistant-attachment btn-icon" aria-label="{{#str}}attach_file, local_aiassistant{{/str}}">
+                <i class="fa fa-paperclip" aria-hidden="true"></i>
+            </button>
+            
+            <input type="text" id="local-aiassistant-input" 
+                class="local-aiassistant-input" 
+                placeholder="{{#str}}message_placeholder, local_aiassistant{{/str}}"
+                aria-label="{{#str}}message_placeholder, local_aiassistant{{/str}}">
+            
+            <button id="local-aiassistant-send" class="local-aiassistant-send btn-icon" aria-label="{{#str}}send, local_aiassistant{{/str}}">
+                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+        <div class="local-aiassistant-branding">
+            {{#str}}powered_by, local_aiassistant{{/str}}
+        </div>
+    </div>
+</div>

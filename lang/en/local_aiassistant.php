@@ -22,14 +22,21 @@
  * @copyright 2025, Wail Abualela wailabualela@alborhan.sa
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['pluginname']      = 'AI Assistant';
-$string['enable']          = 'Enable AI Assistant';
-$string['enable_desc']     = 'Enable or disable the floating AI assistant button across all pages.';
-$string['apikey']          = 'API Key';
-$string['apikey_desc']     = 'Enter the API key for connecting to the AI service provider (e.g., OpenAI).';
-$string['chatplaceholder'] = 'Ask me anything about this page...';
-$string['chatloading']     = 'The assistant is thinking...';
-$string['send']            = 'Send';
-$string['closechat']       = 'Close chat';
-$string['ai_labeltext']    = 'AI Assistant';
+$string['pluginname'] = 'AI Assistant';
+$string['open_assistant'] = 'Open AI Assistant';
+$string['need_help'] = 'Need help?';
+$string['ai_labeltext'] = 'Need help?';
+$string['assistant_name'] = 'Moodle AI Support';
+$string['options'] = 'Options';
+$string['close'] = 'Close';
+$string['welcome_message'] = 'Hi! I\'m the Moodle AI Assistant. How can I help you?';
+$string['message_placeholder'] = 'Send a message...';
+$string['attach_file'] = 'Attach file';
+$string['send'] = 'Send message';
+$string['powered_by'] = 'Powered by Moodle AI';
+$string['language_selection'] = 'In what language do you want to continue?';
+$string['anything_else'] = 'Is there anything else that you\'d like to know?';
+$string['enable'] = 'Enable AI Assistant';
+$string['enable_desc'] = 'Enable or disable the AI Assistant for all users';
+$string['apikey'] = 'API Key';
+$string['apikey_desc'] = 'Enter your OpenAI API key (if using OpenAI provider)';

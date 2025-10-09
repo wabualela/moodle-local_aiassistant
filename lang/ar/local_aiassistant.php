@@ -23,14 +23,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname']      = 'المساعد الذكي';
-$string['enable']          = 'تفعيل المساعد الذكي';
-$string['enable_desc']     = 'تفعيل أو تعطيل زر المساعد الذكي العائم عبر جميع الصفحات.';
-$string['apikey']          = 'مفتاح API';
-$string['apikey_desc']     = 'أدخل مفتاح API للاتصال بمزود خدمة الذكاء الاصطناعي (مثل OpenAI).';
-$string['chatplaceholder'] = 'اسألني أي شيء عن هذه الصفحة...';
-$string['chatloading']     = 'المساعد يفكر...';
-$string['send']            = 'إرسال';
-$string['closechat']       = 'إغلاق الدردشة';
-$string['ai_labeltext']    = 'المساعد الذكي';
-    
+$string['pluginname'] = 'مساعد الذكاء الاصطناعي';
+$string['open_assistant'] = 'فتح مساعد الذكاء الاصطناعي';
+$string['need_help'] = 'هل تحتاج إلى مساعدة؟';
+$string['ai_labeltext'] = 'هل تحتاج إلى مساعدة؟';
+$string['assistant_name'] = 'دعم Moodle بالذكاء الاصطناعي';
+$string['options'] = 'خيارات';
+$string['close'] = 'إغلاق';
+$string['welcome_message'] = 'مرحبًا! أنا مساعد Moodle الذكي. كيف يمكنني مساعدتك؟';
+$string['message_placeholder'] = 'أرسل رسالة...';
+$string['attach_file'] = 'إرفاق ملف';
+$string['send'] = 'إرسال رسالة';
+$string['powered_by'] = 'مدعوم من Moodle AI';
+$string['language_selection'] = 'ما هي اللغة التي تريد المتابعة بها؟';
+$string['anything_else'] = 'هل هناك أي شيء آخر تود معرفته؟';
+$string['enable'] = 'تفعيل مساعد الذكاء الاصطناعي';
+$string['enable_desc'] = 'تفعيل أو تعطيل مساعد الذكاء الاصطناعي لجميع المستخدمين';
+$string['apikey'] = 'مفتاح API';
+$string['apikey_desc'] = 'أدخل مفتاح OpenAI API الخاص بك (في حالة استخدام مزود OpenAI)';
