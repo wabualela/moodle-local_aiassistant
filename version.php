@@ -25,10 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component    = 'local_aiassistant';
-$plugin->version      = 2025091800;
-$plugin->requires     = 2022041900; // Moodle 4.0+
+$plugin->version      = 2025092400;
+$plugin->requires     = 2024100700; // Moodle 4.5+ for core AI subsystem.
 $plugin->maturity     = MATURITY_ALPHA;
-$plugin->release      = '0.1 Alpha';
-$plugin->dependencies = [
-    'block_openai_chat' => 2025021700, // Requires the OpenAI block plugin.
-];
+$plugin->release      = '0.2 Alpha';

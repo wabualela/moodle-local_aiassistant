@@ -152,6 +152,7 @@
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    color: #ffffff !important;
 }
 
 .local-aiassistant-chat-controls {
@@ -227,6 +228,15 @@
     background-color: var(--aiassistant-message-ai);
     color: #333;
     border-bottom-left-radius: 4px;
+}
+
+.local-aiassistant-message-error .local-aiassistant-message-content {
+    background-color: #fdecea;
+    color: #a61b1b;
+}
+
+.local-aiassistant-message-error .local-aiassistant-message-time {
+    color: #d16a6a;
 }
 
 .local-aiassistant-message-time {

@@ -21,7 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+
+    const FALLBACK_ERROR_MESSAGE = 'An unexpected error occurred. Please try again later.';
 
     /**
      * Chat class to handle AI assistant interaction
@@ -37,7 +39,12 @@ define(['jquery'], function($) {
             this.input = null;
             this.sendButton = null;
             this.closeButton = null;
+            this.optionsButton = null;
+            this.attachmentButton = null;
             this.isOpen = false;
+            this.history = [];
+            this.isSending = false;
+            this.errorMessage = '';
         }
 
         /**
@@ -57,6 +64,14 @@ define(['jquery'], function($) {
             this.input = this.chatBox.querySelector('#local-aiassistant-input');
             this.sendButton = this.chatBox.querySelector('#local-aiassistant-send');
             this.closeButton = this.chatBox.querySelector('.local-aiassistant-chat-close');
+            this.optionsButton = this.chatBox.querySelector('.local-aiassistant-chat-options');
+            this.attachmentButton = this.chatBox.querySelector('.local-aiassistant-attachment');
+
+            if (this.chatBox && this.chatBox.dataset && this.chatBox.dataset.errorGeneric) {
+                this.errorMessage = this.chatBox.dataset.errorGeneric;
+            } else {
+                this.errorMessage = FALLBACK_ERROR_MESSAGE;
+            }
 
             // Bind event listeners
             this.bindEvents();
@@ -82,6 +97,11 @@ define(['jquery'], function($) {
             // Close button
             if (this.closeButton) {
                 this.closeButton.addEventListener('click', () => this.closeChat());
+            }
+
+            // Options button
+            if (this.optionsButton) {
+                this.optionsButton.addEventListener('click', () => this.openSettings());
             }
 
             // Send button
@@ -112,6 +132,23 @@ define(['jquery'], function($) {
             this.chatBox.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
+        }
+
+        /**
+         * Enable or disable the chat controls while a request is in progress.
+         *
+         * @param {boolean} disabled
+         */
+        setInputDisabled(disabled) {
+            if (this.input) {
+                this.input.disabled = disabled;
+            }
+            if (this.sendButton) {
+                this.sendButton.disabled = disabled;
+            }
+            if (this.attachmentButton) {
+                this.attachmentButton.disabled = disabled;
+            }
         }
 
         /**
@@ -151,14 +188,32 @@ define(['jquery'], function($) {
         }
 
         /**
+         * Open settings page
+         */
+        openSettings() {
+            const settingsUrl = this.chatBox.getAttribute('data-settingsurl');
+            if (settingsUrl) {
+                window.location.href = settingsUrl;
+            }
+        }
+
+        /**
          * Send a message
          */
         sendMessage() {
+            if (this.isSending) {
+                return;
+            }
+
             const message = this.input.value.trim();
 
             if (message === '') {
                 return;
             }
+
+            const historyPayload = this.history.map((entry) => ({
+                message: entry.message
+            }));
 
             // Add user message to UI
             this.addMessage(message, 'user');
@@ -166,15 +221,50 @@ define(['jquery'], function($) {
             // Clear input
             this.input.value = '';
 
+            // Persist user message for future turns.
+            this.history.push({sender: 'user', message: message});
+
             // Show typing indicator
             this.showTypingIndicator();
 
-            // TODO: Send to backend via web service
-            // For now, simulate a response
-            setTimeout(() => {
-                this.hideTypingIndicator();
-                this.addMessage('This is a simulated response. Web service integration coming soon!', 'ai');
-            }, 1000);
+            this.setInputDisabled(true);
+            this.isSending = true;
+
+            Ajax.call([{
+                methodname: 'local_aiassistant_get_completion',
+                args: {
+                    message: message,
+                    history: historyPayload,
+                },
+            }])[0]
+                .then((response) => {
+                    if (response.success) {
+                        const content = response.formattedmessage || response.message;
+                        this.addMessage(content, 'ai', {
+                            renderAsHtml: Boolean(response.formattedmessage),
+                        });
+                        this.history.push({sender: 'ai', message: response.message});
+                    } else {
+                        const errortext = response.message || this.errorMessage;
+                        this.addMessage(errortext, 'ai', {
+                            isError: true,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Notification.exception(error);
+                    this.addMessage(this.errorMessage, 'ai', {
+                        isError: true,
+                    });
+                })
+                .finally(() => {
+                    this.hideTypingIndicator();
+                    this.setInputDisabled(false);
+                    this.isSending = false;
+                    if (this.input) {
+                        this.input.focus();
+                    }
+                });
         }
 
         /**
@@ -183,13 +273,23 @@ define(['jquery'], function($) {
          * @param {string} text - The message text
          * @param {string} sender - Either 'user' or 'ai'
          */
-        addMessage(text, sender) {
+        addMessage(text, sender, options = {}) {
+            const renderAsHtml = options.renderAsHtml || false;
+            const isError = options.isError || false;
+
             const messageDiv = document.createElement('div');
             messageDiv.className = `local-aiassistant-message local-aiassistant-message-${sender}`;
+            if (isError) {
+                messageDiv.classList.add('local-aiassistant-message-error');
+            }
 
             const contentDiv = document.createElement('div');
             contentDiv.className = 'local-aiassistant-message-content';
-            contentDiv.textContent = text;
+            if (renderAsHtml) {
+                contentDiv.innerHTML = text;
+            } else {
+                contentDiv.textContent = text;
+            }
 
             const timeDiv = document.createElement('div');
             timeDiv.className = 'local-aiassistant-message-time';
@@ -208,6 +308,7 @@ define(['jquery'], function($) {
          * Show typing indicator
          */
         showTypingIndicator() {
+            this.hideTypingIndicator();
             const indicator = document.createElement('div');
             indicator.className = 'local-aiassistant-typing-indicator';
             indicator.id = 'local-aiassistant-typing';

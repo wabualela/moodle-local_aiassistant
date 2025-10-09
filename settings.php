@@ -25,6 +25,13 @@
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_aiassistant', get_string('pluginname', 'local_aiassistant'));
 
+    // General settings heading.
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/generalheading',
+        get_string('generalheading', 'local_aiassistant'),
+        ''
+    ));
+
     $settings->add(new admin_setting_configcheckbox(
         'local_aiassistant/enable',
         get_string('enable', 'local_aiassistant'),
@@ -32,11 +39,48 @@ if ($hassiteconfig) {
         1
     ));
 
-    $settings->add(new admin_setting_configtext(
-        'local_aiassistant/apikey',
-        get_string('apikey', 'local_aiassistant'),
-        get_string('apikey_desc', 'local_aiassistant'),
+    // Appearance settings heading.
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/appearanceheading',
+        get_string('appearanceheading', 'local_aiassistant'),
         ''
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'local_aiassistant/assistantname',
+        get_string('assistantname', 'local_aiassistant'),
+        get_string('assistantname_desc', 'local_aiassistant'),
+        get_string('assistant_name', 'local_aiassistant')
+    ));
+
+    $settings->add(new admin_setting_configcolourpicker(
+        'local_aiassistant/fabcolor',
+        get_string('fabcolor', 'local_aiassistant'),
+        get_string('fabcolor_desc', 'local_aiassistant'),
+        '#0f6cbf'
+    ));
+
+    $settings->add(new admin_setting_configstoredfile(
+        'local_aiassistant/fabicon',
+        get_string('fabicon', 'local_aiassistant'),
+        get_string('fabicon_desc', 'local_aiassistant'),
+        'fabicon',
+        0,
+        ['maxfiles' => 1, 'accepted_types' => ['.png', '.jpg', '.svg']]
+    ));
+
+    // AI integration heading.
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/integrationheading',
+        get_string('integrationheading', 'local_aiassistant'),
+        get_string('integrationheading_desc', 'local_aiassistant')
+    ));
+
+    $settings->add(new admin_setting_configtextarea(
+        'local_aiassistant/prompt',
+        get_string('prompt', 'local_aiassistant'),
+        get_string('prompt_desc', 'local_aiassistant'),
+        get_string('defaultprompt', 'local_aiassistant')
     ));
 
     $ADMIN->add('localplugins', $settings);

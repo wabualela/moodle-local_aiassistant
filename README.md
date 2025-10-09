@@ -9,6 +9,7 @@ A floating AI assistant for Moodle that provides contextual help and support to 
 - **Responsive Design**: Works on desktop and mobile devices
 - **RTL Support**: Full support for right-to-left languages
 - **Typing Indicators**: Visual feedback when the AI is "thinking"
+- **Core AI Integration**: Uses Moodle's AI subsystem to talk to whichever provider you enable
 - **Keyboard Navigation**: Full keyboard accessibility support
 
 ## Installation
@@ -22,7 +23,10 @@ A floating AI assistant for Moodle that provides contextual help and support to 
 Navigate to **Site administration > Plugins > Local plugins > AI Assistant**
 
 - **Enable AI Assistant**: Turn the assistant on/off for all users
-- **API Key**: Enter your OpenAI API key (if using OpenAI provider)
+- **Assistant appearance**: Choose the label, colour, and icon shown in the FAB
+- **System prompt**: Outline how the assistant should behave in responses
+
+AI credentials, models, and rate limits are managed in **Site administration > AI**. Enable and configure an AI provider (for example the OpenAI provider) that supports the *Generate text* action; the assistant will automatically use whichever enabled provider is available.
 
 ## Current Status
 
@@ -31,14 +35,13 @@ Navigate to **Site administration > Plugins > Local plugins > AI Assistant**
 - Chat interface UI with templates
 - JavaScript module for opening/closing chat
 - Message display with user/AI differentiation
+- Live responses via Moodle's core AI subsystem (*Generate text* action)
 - Typing indicator animation
 - Proper CSS styling with animations
 - Accessibility features (ARIA labels, keyboard navigation)
 - RTL language support
 
 ### 🚧 In Progress
-- Web service endpoints for AI communication
-- Integration with Moodle's core AI subsystem or OpenAI block
 - Message history persistence
 - File attachment support
 
@@ -91,7 +94,7 @@ local/aiassistant/
 3. **Test the chat**:
    - Click the FAB to open chat
    - Type a message and press Enter or click send
-   - You should see a simulated response (web service integration pending)
+   - Moodle will call the configured AI provider via the core AI subsystem; you should receive the generated reply or an administrator-friendly error if no provider/action is available
    - Click the X to close the chat
    - Click outside the chat to close it
 
@@ -156,18 +159,17 @@ php admin/cli/purge_caches.php
 ## Next Steps
 
 ### Short Term
-1. Create web service endpoints for AI communication
-2. Integrate with Moodle's core AI subsystem
-3. Add error handling and user feedback
-4. Implement message persistence
+1. Implement message persistence so conversations survive reloads.
+2. Pass course and page context into the AI request for more relevant answers.
+3. Surface AI policy/usage warnings in the UI and allow quick retry/resubmit flows.
+4. Add file attachment support (forward to providers that permit it).
 
 ### Long Term
-1. Add context awareness (current course, page type, etc.)
-2. Support for file attachments
-3. Voice input support
-4. Multi-language AI responses
-5. Analytics and usage tracking
-6. Admin dashboard for monitoring
+1. Voice input support
+2. Multi-language AI responses
+3. Analytics and usage tracking
+4. Admin dashboard for monitoring
+5. Optional streaming responses
 
 ## Architecture
 
@@ -176,7 +178,7 @@ php admin/cli/purge_caches.php
 1. **Injection**: The `hook_callbacks.php` uses Moodle's hook system to inject the FAB and chat HTML after the main content region
 2. **Initialization**: The `chat.js` AMD module initializes when the page loads
 3. **Interaction**: Users click the FAB to toggle the chat interface
-4. **Communication**: (TODO) Messages will be sent to web services that communicate with AI providers
+4. **Communication**: Messages are sent via `local_aiassistant_get_completion`, which delegates to Moodle's core AI manager (Generate text action)
 
 ### Hook System
 
@@ -184,10 +186,7 @@ The plugin uses Moodle's modern hook system (`\core\hook\output\after_standard_m
 
 ### AI Provider Integration
 
-The plugin is designed to work with:
-- Moodle's core AI subsystem (Moodle 4.5+)
-- OpenAI Chat block (current dependency)
-- Custom AI providers (future)
+The assistant relies on Moodle's AI subsystem (Moodle 4.5+) for credentials and HTTP calls. Any enabled AI provider plugin that supports the *Generate text* action—such as the core OpenAI provider—will automatically handle requests. Additional providers can be installed to target different models or vendors.
 
 ## Troubleshooting
 
@@ -226,4 +225,3 @@ GPL v3 or later
 
 - **Author**: Wail Abualela (wailabualela@alborhan.sa)
 - **Copyright**: 2025
-- **Dependencies**: block_openai_chat

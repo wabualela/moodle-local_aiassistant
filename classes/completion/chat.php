@@ -36,103 +36,42 @@ class chat extends completion {
      *
      * @return array Response data
      */
-    public function create_completion() {
-        if (empty($this->apikey)) {
-            return [
-                'success' => false,
-                'message' => get_string('apikeynotset', 'local_aiassistant'),
-            ];
-        }
+    public function create_completion(): array {
+        $prompttext = $this->build_prompttext();
 
-        // Format conversation history.
-        $messages = $this->format_history();
-
-        // Add system prompt at the beginning.
-        array_unshift($messages, ['role' => 'system', 'content' => $this->prompt]);
-
-        // Add current user message.
-        $messages[] = ['role' => 'user', 'content' => $this->message];
-
-        // Make API call.
-        $response = $this->make_api_call($messages);
-
-        return $response;
-    }
-
-    /**
-     * Format conversation history for API
-     *
-     * @return array Formatted messages
-     */
-    protected function format_history() {
-        $messages = [];
-
-        foreach ($this->history as $index => $item) {
-            // Alternate between user and assistant based on index.
-            $role = $index % 2 === 0 ? 'user' : 'assistant';
-            $messages[] = [
-                'role' => $role,
-                'content' => $item['message'],
-            ];
-        }
-
-        return $messages;
-    }
-
-    /**
-     * Make API call to OpenAI
-     *
-     * @param array $messages Formatted messages
-     * @return array Response data
-     */
-    protected function make_api_call($messages) {
-        $curlbody = [
-            'model' => $this->model,
-            'messages' => $messages,
-            'temperature' => $this->temperature,
-            'max_tokens' => $this->maxlength,
-            'top_p' => $this->topp,
-            'frequency_penalty' => $this->frequency,
-            'presence_penalty' => $this->presence,
-        ];
-
-        $curl = new \curl();
-        $curl->setopt([
-            'CURLOPT_HTTPHEADER' => [
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-            ],
-        ]);
+        $action = new \core_ai\aiactions\generate_text(
+            contextid: $this->get_contextid(),
+            userid: $this->get_userid(),
+            prompttext: $prompttext,
+        );
 
         try {
-            $response = $curl->post('https://api.openai.com/v1/chat/completions', json_encode($curlbody));
-            $responsedata = json_decode($response);
-
-            if (property_exists($responsedata, 'error')) {
-                return [
-                    'success' => false,
-                    'message' => $responsedata->error->message,
-                ];
-            }
-
-            if (!property_exists($responsedata, 'choices') || empty($responsedata->choices)) {
-                return [
-                    'success' => false,
-                    'message' => get_string('invalidresponse', 'local_aiassistant'),
-                ];
-            }
-
-            return [
-                'success' => true,
-                'message' => $responsedata->choices[0]->message->content,
-                'id' => $responsedata->id ?? '',
-            ];
-
-        } catch (\Exception $e) {
+            $manager = \core\di::get(\core_ai\manager::class);
+            $response = $manager->process_action($action);
+        } catch (\Throwable $exception) {
+            debugging($exception->getMessage(), DEBUG_DEVELOPER);
             return [
                 'success' => false,
-                'message' => get_string('apierror', 'local_aiassistant') . ': ' . $e->getMessage(),
+                'message' => get_string('aiintegrationerror', 'local_aiassistant'),
+                'errorcode' => 0,
             ];
         }
+
+        if (!$response->get_success()) {
+            $errormessage = $response->get_errormessage() ?: get_string('aiintegrationerror', 'local_aiassistant');
+            return [
+                'success' => false,
+                'message' => $errormessage,
+                'errorcode' => $response->get_errorcode(),
+            ];
+        }
+
+        $data = $response->get_response_data();
+
+        return [
+            'success' => true,
+            'message' => $data['generatedcontent'] ?? '',
+            'id' => $data['id'] ?? '',
+        ];
     }
 }

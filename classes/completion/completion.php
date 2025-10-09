@@ -31,63 +31,48 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class completion {
 
-    /** @var string API key */
-    protected $apikey;
-
     /** @var string User message */
-    protected $message;
+    protected string $message;
 
     /** @var array Conversation history */
-    protected $history;
-
-    /** @var string AI model */
-    protected $model;
-
-    /** @var float Temperature */
-    protected $temperature;
-
-    /** @var int Maximum token length */
-    protected $maxlength;
-
-    /** @var float Top P */
-    protected $topp;
-
-    /** @var float Frequency penalty */
-    protected $frequency;
-
-    /** @var float Presence penalty */
-    protected $presence;
+    protected array $history;
 
     /** @var string System prompt */
-    protected $prompt;
+    protected string $prompt;
 
     /** @var string Assistant name */
-    protected $assistantname;
+    protected string $assistantname;
 
     /** @var string User name */
-    protected $username;
+    protected string $username;
+
+    /** @var int Context ID for the interaction */
+    protected int $contextid;
+
+    /** @var int User ID initiating the request */
+    protected int $userid;
 
     /**
      * Constructor
      *
      * @param string $message User message
      * @param array $history Conversation history
+     * @param \context $context Moodle context
+     * @param int $userid User ID
+     * @param string $username Rendered user name
      */
-    public function __construct($message, $history) {
+    public function __construct(string $message, array $history, \context $context, int $userid, string $username) {
         $this->message = $message;
         $this->history = $history;
+        $this->contextid = $context->id;
+        $this->userid = $userid;
+        $this->username = $username ?: get_string('user', 'core');
 
         // Load settings from plugin configuration.
-        $this->apikey = get_config('local_aiassistant', 'apikey');
-        $this->model = get_config('local_aiassistant', 'model') ?: 'gpt-3.5-turbo';
-        $this->temperature = (float) get_config('local_aiassistant', 'temperature') ?: 0.7;
-        $this->maxlength = (int) get_config('local_aiassistant', 'maxlength') ?: 500;
-        $this->topp = (float) get_config('local_aiassistant', 'topp') ?: 1.0;
-        $this->frequency = (float) get_config('local_aiassistant', 'frequency') ?: 0.0;
-        $this->presence = (float) get_config('local_aiassistant', 'presence') ?: 0.0;
-        $this->prompt = get_config('local_aiassistant', 'prompt') ?: get_string('defaultprompt', 'local_aiassistant');
-        $this->assistantname = get_config('local_aiassistant', 'assistantname') ?: 'AI Assistant';
-        $this->username = get_config('local_aiassistant', 'username') ?: 'User';
+        $this->prompt = (string) (get_config('local_aiassistant', 'prompt')
+            ?: get_string('defaultprompt', 'local_aiassistant'));
+        $this->assistantname = (string) (get_config('local_aiassistant', 'assistantname')
+            ?: get_string('assistant_name', 'local_aiassistant'));
     }
 
     /**
@@ -96,4 +81,57 @@ abstract class completion {
      * @return array Response data
      */
     abstract public function create_completion();
+
+    /**
+     * Build a prompt string that captures the system instructions and conversation state.
+     *
+     * @return string
+     */
+    protected function build_prompttext(): string {
+        $segments = [];
+
+        $systemprompt = trim($this->prompt);
+        if ($systemprompt !== '') {
+            // Encourage the model to act according to the configured persona.
+            $segments[] = $systemprompt;
+        }
+
+        $transcript = [];
+        foreach ($this->history as $index => $entry) {
+            if (!isset($entry['message'])) {
+                continue;
+            }
+            $role = $index % 2 === 0 ? $this->username : $this->assistantname;
+            $transcript[] = "{$role}: {$entry['message']}";
+        }
+
+        $transcript[] = "{$this->username}: {$this->message}";
+
+        if ($transcript) {
+            $segments[] = implode("\n", $transcript);
+        }
+
+        // Prompt the model to continue as the assistant.
+        $segments[] = "{$this->assistantname}:";
+
+        return implode("\n\n", array_filter($segments));
+    }
+
+    /**
+     * Expose the context ID for downstream consumers.
+     *
+     * @return int
+     */
+    protected function get_contextid(): int {
+        return $this->contextid;
+    }
+
+    /**
+     * Expose the user ID for downstream consumers.
+     *
+     * @return int
+     */
+    protected function get_userid(): int {
+        return $this->userid;
+    }
 }

@@ -52,10 +52,48 @@ class hook_callbacks
         // Initialize the JavaScript module.
         $PAGE->requires->js_call_amd('local_aiassistant/chat', 'init');
 
+        // Get configurable settings.
+        $assistantname = get_config('local_aiassistant', 'assistantname');
+        if (empty($assistantname)) {
+            $assistantname = get_string('assistant_name', 'local_aiassistant');
+        }
+
+        $fabcolor = get_config('local_aiassistant', 'fabcolor');
+        if (empty($fabcolor)) {
+            $fabcolor = '#0f6cbf';
+        }
+
+        // Get custom FAB icon if uploaded.
+        $fs = get_file_storage();
+        $syscontext = \context_system::instance();
+        $files = $fs->get_area_files($syscontext->id, 'local_aiassistant', 'fabicon', 0, 'itemid', false);
+        $iconurl = '';
+        if (!empty($files)) {
+            $file = reset($files);
+            $iconurl = moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            )->out();
+        } else {
+            // Use default icon.
+            $iconurl = (new moodle_url('/local/aiassistant/pix/sheikh.svg'))->out(false);
+        }
+
+        // Settings URL for the options button.
+        $settingsurl = (new moodle_url('/admin/settings.php', ['section' => 'local_aiassistant']))->out(false);
+
         // Prepare context for templates.
         $context = [
-            'iconurl' => (new moodle_url('/local/aiassistant/pix/sheikh.svg'))->out(false),
+            'iconurl' => $iconurl,
+            'fabcolor' => $fabcolor,
+            'assistantname' => $assistantname,
+            'settingsurl' => $settingsurl,
             'current_time' => userdate(time(), get_string('strftimetime', 'core_langconfig')),
+            'error_generic' => get_string('error_generic', 'local_aiassistant'),
         ];
 
         // Add the FAB button.

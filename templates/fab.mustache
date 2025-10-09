@@ -31,10 +31,13 @@
          aria-label="{{#str}}open_assistant, local_aiassistant{{/str}}"
          aria-expanded="false"
          aria-controls="local-aiassistant-chat"
-         data-action="open-chat">
+         data-action="open-chat"
+         style="background-color: {{fabcolor}} !important;">
         <img src="{{iconurl}}" alt="" class="local-aiassistant-fab-icon" aria-hidden="true" />
     </div>
-    <span class="local-aiassistant-fab-label">
+    <span 
+        class="local-aiassistant-fab-label"
+        style="background-color: {{fabcolor}} !important;">
         {{#str}}ai_labeltext, local_aiassistant{{/str}}
     </span>
 </div>

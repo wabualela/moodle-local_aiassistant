@@ -36,7 +36,28 @@ $string['send'] = 'Send message';
 $string['powered_by'] = 'Powered by Moodle AI';
 $string['language_selection'] = 'In what language do you want to continue?';
 $string['anything_else'] = 'Is there anything else that you\'d like to know?';
+$string['assistantdisabled'] = 'The assistant is currently disabled. Please contact the site administrator.';
+$string['aiintegrationerror'] = 'The AI service is unavailable right now. Please try again later or contact the site administrator.';
+$string['error_generic'] = 'Sorry, I could not contact the assistant. Please try again later.';
+// Settings headings.
+$string['generalheading'] = 'General Settings';
+$string['appearanceheading'] = 'Appearance Settings';
+$string['integrationheading'] = 'AI Integration';
+
+// General settings.
 $string['enable'] = 'Enable AI Assistant';
 $string['enable_desc'] = 'Enable or disable the AI Assistant for all users';
-$string['apikey'] = 'API Key';
-$string['apikey_desc'] = 'Enter your OpenAI API key (if using OpenAI provider)';
+
+// Appearance settings.
+$string['assistantname'] = 'Assistant Name';
+$string['assistantname_desc'] = 'The name displayed in the chat header';
+$string['fabcolor'] = 'FAB Button Color';
+$string['fabcolor_desc'] = 'Color of the floating action button';
+$string['fabicon'] = 'FAB Icon';
+$string['fabicon_desc'] = 'Upload a custom icon for the FAB button (PNG, JPG, or SVG). Recommended size: 40x40px';
+
+// AI integration.
+$string['integrationheading_desc'] = 'Credentials, models, and rate limits are now managed via Moodle\'s AI providers. Visit Site administration > AI to configure the OpenAI provider, then enable the actions you want to expose to users.';
+$string['prompt'] = 'System Prompt';
+$string['prompt_desc'] = 'The system prompt that defines the assistant\'s behavior';
+$string['defaultprompt'] = 'You are a helpful AI assistant for a Moodle Learning Management System. Provide clear, concise, and accurate assistance to users.';

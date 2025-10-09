@@ -25,11 +25,11 @@
 namespace local_aiassistant\external;
 
 use context_system;
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_single_structure;
-use external_multiple_structure;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * External function get_completion
@@ -63,7 +63,7 @@ class get_completion extends external_api {
      * @return array Response data
      */
     public static function execute($message, $history) {
-        global $PAGE;
+        global $USER;
 
         // Validate parameters.
         $params = self::validate_parameters(self::execute_parameters(), [
@@ -71,9 +71,12 @@ class get_completion extends external_api {
             'history' => $history,
         ]);
 
-        // Check capability.
+        // Require user session to enforce capability checks.
+        require_login();
+
         $context = context_system::instance();
         self::validate_context($context);
+        require_capability('local/aiassistant:view', $context);
 
         // Check if assistant is enabled.
         if (!get_config('local_aiassistant', 'enable')) {
@@ -81,11 +84,18 @@ class get_completion extends external_api {
                 'success' => false,
                 'message' => get_string('assistantdisabled', 'local_aiassistant'),
                 'formattedmessage' => '',
+                'errorcode' => 0,
             ];
         }
 
         // Create completion.
-        $completion = new \local_aiassistant\completion\chat($params['message'], $params['history']);
+        $completion = new \local_aiassistant\completion\chat(
+            message: $params['message'],
+            history: $params['history'],
+            context: $context,
+            userid: $USER->id,
+            username: fullname($USER, true)
+        );
         $response = $completion->create_completion();
 
         // Format the message as Markdown if successful.
@@ -98,6 +108,7 @@ class get_completion extends external_api {
             'success' => $response['success'],
             'message' => $response['message'],
             'formattedmessage' => $formattedmessage,
+            'errorcode' => $response['errorcode'] ?? 0,
         ];
     }
 
@@ -111,6 +122,7 @@ class get_completion extends external_api {
             'success' => new external_value(PARAM_BOOL, 'Whether the request was successful'),
             'message' => new external_value(PARAM_RAW, 'AI response message'),
             'formattedmessage' => new external_value(PARAM_RAW, 'Formatted HTML message'),
+            'errorcode' => new external_value(PARAM_INT, 'AI subsystem error code', VALUE_DEFAULT, 0),
         ]);
     }
 }

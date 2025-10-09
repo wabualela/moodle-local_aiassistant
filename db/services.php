@@ -31,6 +31,6 @@ $functions = [
         'description' => 'Get AI completion for user message',
         'type'        => 'write',
         'ajax'        => true,
-        'loginrequired' => false,
+        'loginrequired' => true,
     ],
 ];
