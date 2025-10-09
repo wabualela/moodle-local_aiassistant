@@ -5,19 +5,20 @@
 
 /* Base variables that will work with Moodle themes */
 :root {
-    --aiassistant-primary: var(--primary, #0f6cbf);
-    --aiassistant-primary-light: var(--primary-light, #e6f0fa);
+    /* Support multiple theme variable names with fallback chain */
+    --aiassistant-primary: var(--primary, var(--mb2-pb-accent1, var(--theme-primary, var(--brand-primary, #0f6cbf))));
+    --aiassistant-primary-light: var(--primary-light, var(--mb2-pb-accent1-light, var(--theme-primary-light, #e6f0fa)));
     --aiassistant-text-light: #ffffff;
-    --aiassistant-bg: #ffffff;
-    --aiassistant-border: #e0e0e0;
+    --aiassistant-bg: var(--body-bg, var(--background, #ffffff));
+    --aiassistant-border: var(--border-color, var(--gray-300, #e0e0e0));
     --aiassistant-message-ai: var(--aiassistant-primary-light);
-    --aiassistant-message-user: #f0f0f0;
+    --aiassistant-message-user: var(--gray-100, #f0f0f0);
     --aiassistant-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     --aiassistant-radius: 10px;
     --aiassistant-transition: all 0.3s ease;
-    --aiassistant-footer-bg: #f8f8f8;
+    --aiassistant-footer-bg: var(--gray-50, #f8f8f8);
     --aiassistant-input-bg: #ffffff;
-    --aiassistant-input-border: #e0e0e0;
+    --aiassistant-input-border: var(--input-border-color, var(--border-color, #e0e0e0));
     --aiassistant-z-index: 1050;
 }
 
