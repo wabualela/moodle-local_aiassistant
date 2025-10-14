@@ -101,7 +101,15 @@ class get_completion extends external_api {
         // Format the message as Markdown if successful.
         $formattedmessage = '';
         if ($response['success']) {
-            $formattedmessage = format_text($response['message'], FORMAT_MARKDOWN, ['context' => $context]);
+            $formattedmessage = format_text(
+                $response['message'],
+                FORMAT_MARKDOWN,
+                [
+                    'context' => $context,
+                    'noclean' => false,
+                    'filter' => false,
+                ]
+            );
         }
 
         return [

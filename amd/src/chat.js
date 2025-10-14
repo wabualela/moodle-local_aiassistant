@@ -238,26 +238,40 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 },
             }])[0]
                 .then((response) => {
+                    window.console.log('AI Response received:', response);
                     if (response.success) {
                         const content = response.formattedmessage || response.message;
+                        window.console.log('Adding AI message, renderAsHtml:', Boolean(response.formattedmessage));
                         this.addMessage(content, 'ai', {
                             renderAsHtml: Boolean(response.formattedmessage),
                         });
                         this.history.push({sender: 'ai', message: response.message});
                     } else {
+                        window.console.log('AI Response failed:', response.message);
                         const errortext = response.message || this.errorMessage;
                         this.addMessage(errortext, 'ai', {
                             isError: true,
                         });
                     }
+
+                    // Cleanup after successful response
+                    window.console.log('Cleaning up after response');
+                    this.hideTypingIndicator();
+                    this.setInputDisabled(false);
+                    this.isSending = false;
+                    if (this.input) {
+                        this.input.focus();
+                    }
                 })
                 .catch((error) => {
+                    window.console.error('Ajax call failed:', error);
                     Notification.exception(error);
                     this.addMessage(this.errorMessage, 'ai', {
                         isError: true,
                     });
-                })
-                .finally(() => {
+
+                    // Cleanup after error
+                    window.console.log('Cleaning up after error');
                     this.hideTypingIndicator();
                     this.setInputDisabled(false);
                     this.isSending = false;
@@ -272,10 +286,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
          *
          * @param {string} text - The message text
          * @param {string} sender - Either 'user' or 'ai'
+         * @param {Object} options - Additional options for rendering the message
          */
         addMessage(text, sender, options = {}) {
             const renderAsHtml = options.renderAsHtml || false;
             const isError = options.isError || false;
+
+            window.console.log('addMessage called:', {sender, renderAsHtml, isError, textLength: text.length});
 
             const messageDiv = document.createElement('div');
             messageDiv.className = `local-aiassistant-message local-aiassistant-message-${sender}`;
@@ -286,7 +303,11 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             const contentDiv = document.createElement('div');
             contentDiv.className = 'local-aiassistant-message-content';
             if (renderAsHtml) {
+                // Sanitize and render HTML safely
                 contentDiv.innerHTML = text;
+                // Remove any script tags that might have been added
+                const scripts = contentDiv.querySelectorAll('script');
+                scripts.forEach(script => script.remove());
             } else {
                 contentDiv.textContent = text;
             }
@@ -299,6 +320,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             messageDiv.appendChild(timeDiv);
 
             this.messagesContainer.appendChild(messageDiv);
+
+            window.console.log('Message added to DOM');
 
             // Scroll to bottom
             this.scrollToBottom();
@@ -342,7 +365,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
          */
         getCurrentTime() {
             const now = new Date();
-            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
         }
     }
 
