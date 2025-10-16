@@ -30,6 +30,7 @@ $string['ai_labeltext'] = 'هل تحتاج إلى مساعدة؟';
 $string['assistant_name'] = 'دعم Moodle بالذكاء الاصطناعي';
 $string['options'] = 'خيارات';
 $string['close'] = 'إغلاق';
+$string['clearhistory'] = 'مسح سجل المحادثة';
 $string['welcome_message'] = 'مرحبًا! أنا مساعد Moodle الذكي. كيف يمكنني مساعدتك؟';
 $string['message_placeholder'] = 'أرسل رسالة...';
 $string['attach_file'] = 'إرفاق ملف';

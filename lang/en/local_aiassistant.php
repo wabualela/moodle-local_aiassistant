@@ -29,6 +29,7 @@ $string['ai_labeltext'] = 'Need help?';
 $string['assistant_name'] = 'Moodle AI Support';
 $string['options'] = 'Options';
 $string['close'] = 'Close';
+$string['clearhistory'] = 'Clear chat history';
 $string['welcome_message'] = 'Hi! I\'m the Moodle AI Assistant. How can I help you?';
 $string['message_placeholder'] = 'Send a message...';
 $string['attach_file'] = 'Attach file';

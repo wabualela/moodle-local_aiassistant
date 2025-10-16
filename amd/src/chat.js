@@ -24,6 +24,7 @@
 define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
 
     const FALLBACK_ERROR_MESSAGE = 'An unexpected error occurred. Please try again later.';
+    const STORAGE_KEY = 'local_aiassistant_chat_history';
 
     /**
      * Chat class to handle AI assistant interaction
@@ -65,6 +66,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             this.sendButton = this.chatBox.querySelector('#local-aiassistant-send');
             this.closeButton = this.chatBox.querySelector('.local-aiassistant-chat-close');
             this.optionsButton = this.chatBox.querySelector('.local-aiassistant-chat-options');
+            this.clearButton = this.chatBox.querySelector('.local-aiassistant-chat-clear');
             this.attachmentButton = this.chatBox.querySelector('.local-aiassistant-attachment');
 
             if (this.chatBox && this.chatBox.dataset && this.chatBox.dataset.errorGeneric) {
@@ -72,6 +74,9 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             } else {
                 this.errorMessage = FALLBACK_ERROR_MESSAGE;
             }
+
+            // Load chat history from localStorage
+            this.loadHistory();
 
             // Bind event listeners
             this.bindEvents();
@@ -102,6 +107,15 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             // Options button
             if (this.optionsButton) {
                 this.optionsButton.addEventListener('click', () => this.openSettings());
+            }
+
+            // Clear history button
+            if (this.clearButton) {
+                this.clearButton.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to clear the chat history? This cannot be undone.')) {
+                        this.clearHistory();
+                    }
+                });
             }
 
             // Send button
@@ -224,6 +238,9 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             // Persist user message for future turns.
             this.history.push({sender: 'user', message: message});
 
+            // Save history to localStorage
+            this.saveHistory();
+
             // Show typing indicator
             this.showTypingIndicator();
 
@@ -246,6 +263,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                             renderAsHtml: Boolean(response.formattedmessage),
                         });
                         this.history.push({sender: 'ai', message: response.message});
+                        // Save history to localStorage
+                        this.saveHistory();
                     } else {
                         window.console.log('AI Response failed:', response.message);
                         const errortext = response.message || this.errorMessage;
@@ -366,6 +385,102 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         getCurrentTime() {
             const now = new Date();
             return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        }
+
+        /**
+         * Save chat history to localStorage
+         */
+        saveHistory() {
+            try {
+                const historyData = {
+                    history: this.history,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData));
+                window.console.log('Chat history saved to localStorage');
+            } catch (e) {
+                window.console.error('Failed to save chat history:', e);
+            }
+        }
+
+        /**
+         * Load chat history from localStorage
+         */
+        loadHistory() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (!stored) {
+                    window.console.log('No chat history found in localStorage');
+                    return;
+                }
+
+                const historyData = JSON.parse(stored);
+
+                // Check if history is older than 24 hours
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                if (historyData.timestamp && (now - historyData.timestamp) > twentyFourHours) {
+                    window.console.log('Chat history expired, clearing');
+                    this.clearHistory();
+                    return;
+                }
+
+                if (historyData.history && Array.isArray(historyData.history)) {
+                    this.history = historyData.history;
+                    window.console.log('Chat history loaded:', this.history.length, 'messages');
+
+                    // Restore messages to UI
+                    this.restoreMessagesToUI();
+                }
+            } catch (e) {
+                window.console.error('Failed to load chat history:', e);
+                this.clearHistory();
+            }
+        }
+
+        /**
+         * Restore saved messages to the UI
+         */
+        restoreMessagesToUI() {
+            // Remove the welcome message if we have history
+            if (this.history.length > 0) {
+                const welcomeMessage = this.messagesContainer.querySelector('.local-aiassistant-message-ai');
+                if (welcomeMessage) {
+                    welcomeMessage.remove();
+                }
+            }
+
+            // Add each message from history
+            this.history.forEach((entry) => {
+                this.addMessage(entry.message, entry.sender, {
+                    renderAsHtml: entry.sender === 'ai',
+                    skipHistoryUpdate: true
+                });
+            });
+
+            window.console.log('Restored', this.history.length, 'messages to UI');
+        }
+
+        /**
+         * Clear chat history
+         */
+        clearHistory() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+                this.history = [];
+                window.console.log('Chat history cleared');
+
+                // Clear all UI messages
+                const messages = this.messagesContainer.querySelectorAll('.local-aiassistant-message');
+                messages.forEach((msg) => {
+                    msg.remove();
+                });
+
+                // Reload the page to restore the welcome message from the template
+                window.location.reload();
+            } catch (e) {
+                window.console.error('Failed to clear chat history:', e);
+            }
         }
     }
 
