@@ -69,6 +69,13 @@ if ($hassiteconfig) {
         ['maxfiles' => 1, 'accepted_types' => ['.png', '.jpg', '.svg']]
     ));
 
+    $settings->add(new admin_setting_confightmleditor(
+        'local_aiassistant/welcomemessage',
+        get_string('welcomemessage', 'local_aiassistant'),
+        get_string('welcomemessage_desc', 'local_aiassistant'),
+        get_string('welcome_message', 'local_aiassistant')
+    ));
+
     // AI integration heading.
     $settings->add(new admin_setting_heading(
         'local_aiassistant/integrationheading',

@@ -60,6 +60,8 @@ $string['fabcolor'] = 'FAB Button Color';
 $string['fabcolor_desc'] = 'Color of the floating action button';
 $string['fabicon'] = 'FAB Icon';
 $string['fabicon_desc'] = 'Upload a custom icon for the FAB button (PNG, JPG, or SVG). Recommended size: 40x40px';
+$string['welcomemessage'] = 'Welcome Message';
+$string['welcomemessage_desc'] = 'The welcome message displayed to users when they open the chat. You can use HTML formatting.';
 
 // AI integration.
 $string['integrationheading_desc'] = 'Credentials, models, and rate limits are now managed via Moodle\'s AI providers. Visit Site administration > AI to configure the OpenAI provider, then enable the actions you want to expose to users.';

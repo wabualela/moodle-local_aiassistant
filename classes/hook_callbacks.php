@@ -63,6 +63,11 @@ class hook_callbacks
             $fabcolor = '#0f6cbf';
         }
 
+        $welcomemessage = get_config('local_aiassistant', 'welcomemessage');
+        if (empty($welcomemessage)) {
+            $welcomemessage = get_string('welcome_message', 'local_aiassistant');
+        }
+
         // Get custom FAB icon if uploaded.
         $fs = get_file_storage();
         $syscontext = \context_system::instance();
@@ -91,6 +96,7 @@ class hook_callbacks
             'iconurl' => $iconurl,
             'fabcolor' => $fabcolor,
             'assistantname' => $assistantname,
+            'welcomemessage' => $welcomemessage,
             'settingsurl' => $settingsurl,
             'current_time' => userdate(time(), get_string('strftimetime', 'core_langconfig')),
             'error_generic' => get_string('error_generic', 'local_aiassistant'),
