@@ -106,7 +106,7 @@ class admin_setting_assistant_id extends \admin_setting {
             $this->get_full_name(),
             $data,
             false,
-            ['id' => $this->get_id(), 'class' => 'form-control']
+            ['id' => $this->get_id(), 'class' => 'form-control', 'data-current-value' => $data]
         );
 
         // Add container for assistant info.

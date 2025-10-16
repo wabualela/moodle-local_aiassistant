@@ -63,7 +63,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * @param {HTMLElement} loading Loading indicator
      */
     function fetchAssistantsList(select, infoContainer, loading) {
-        const currentValue = select.value;
+        // Get the saved value from data attribute
+        const currentValue = select.getAttribute('data-current-value') || '';
 
         Ajax.call([{
             methodname: 'local_aiassistant_list_assistants',
