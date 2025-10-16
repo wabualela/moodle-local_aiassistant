@@ -33,4 +33,22 @@ $functions = [
         'ajax'        => true,
         'loginrequired' => true,
     ],
+    'local_aiassistant_get_assistant_info' => [
+        'classname'   => 'local_aiassistant\external\get_assistant_info',
+        'methodname'  => 'execute',
+        'description' => 'Get OpenAI assistant information',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+        'capabilities' => 'moodle/site:config',
+    ],
+    'local_aiassistant_list_assistants' => [
+        'classname'   => 'local_aiassistant\external\list_assistants',
+        'methodname'  => 'execute',
+        'description' => 'List all OpenAI assistants',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+        'capabilities' => 'moodle/site:config',
+    ],
 ];

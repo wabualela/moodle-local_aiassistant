@@ -88,14 +88,28 @@ class get_completion extends external_api {
             ];
         }
 
-        // Create completion.
-        $completion = new \local_aiassistant\completion\chat(
-            message: $params['message'],
-            history: $params['history'],
-            context: $context,
-            userid: $USER->id,
-            username: fullname($USER, true)
-        );
+        // Get API mode from config.
+        $apimode = get_config('local_aiassistant', 'apimode') ?: 'completion';
+
+        // Create completion based on API mode.
+        if ($apimode === 'assistant') {
+            $completion = new \local_aiassistant\completion\assistant(
+                message: $params['message'],
+                history: $params['history'],
+                context: $context,
+                userid: $USER->id,
+                username: fullname($USER, true)
+            );
+        } else {
+            $completion = new \local_aiassistant\completion\chat(
+                message: $params['message'],
+                history: $params['history'],
+                context: $context,
+                userid: $USER->id,
+                username: fullname($USER, true)
+            );
+        }
+
         $response = $completion->create_completion();
 
         // Format the message as Markdown if successful.

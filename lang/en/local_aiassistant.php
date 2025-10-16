@@ -39,6 +39,11 @@ $string['anything_else'] = 'Is there anything else that you\'d like to know?';
 $string['assistantdisabled'] = 'The assistant is currently disabled. Please contact the site administrator.';
 $string['aiintegrationerror'] = 'The AI service is unavailable right now. Please try again later or contact the site administrator.';
 $string['error_generic'] = 'Sorry, I could not contact the assistant. Please try again later.';
+$string['assistantid_required'] = 'Assistant ID is required when using Assistants API mode. Please configure it in the plugin settings.';
+$string['assistantid_invalid_format'] = 'Invalid assistant ID format. It should start with "asst_" followed by alphanumeric characters.';
+$string['assistantinfo_no_apikey'] = 'OpenAI API key is not configured. Please configure it in Site administration > AI > AI Providers.';
+$string['loading'] = 'Loading...';
+$string['fetching_assistants'] = 'Fetching assistants from OpenAI...';
 // Settings headings.
 $string['generalheading'] = 'General Settings';
 $string['appearanceheading'] = 'Appearance Settings';
@@ -58,6 +63,21 @@ $string['fabicon_desc'] = 'Upload a custom icon for the FAB button (PNG, JPG, or
 
 // AI integration.
 $string['integrationheading_desc'] = 'Credentials, models, and rate limits are now managed via Moodle\'s AI providers. Visit Site administration > AI to configure the OpenAI provider, then enable the actions you want to expose to users.';
+$string['apimode'] = 'API Mode';
+$string['apimode_desc'] = 'Choose whether to use the standard Completion API or the Assistants API';
+$string['apimode_completion'] = 'Completion API (Standard)';
+$string['apimode_assistant'] = 'Assistants API (Advanced)';
+$string['assistantid'] = 'OpenAI Assistant';
+$string['assistantid_desc'] = 'Select your OpenAI Assistant from the dropdown. The list is automatically fetched from your OpenAI account. Create an assistant at platform.openai.com if you haven\'t already.';
 $string['prompt'] = 'System Prompt';
-$string['prompt_desc'] = 'The system prompt that defines the assistant\'s behavior';
+$string['prompt_desc'] = 'The system prompt that defines the assistant\'s behavior (used only with Completion API mode)';
 $string['defaultprompt'] = 'You are a helpful AI assistant for a Moodle Learning Management System. Provide clear, concise, and accurate assistance to users.';
+
+// API errors.
+$string['noproviders'] = 'No AI providers configured';
+$string['noapikey'] = 'OpenAI API key not configured';
+$string['providererror'] = 'Could not access OpenAI provider';
+$string['curlerror'] = 'cURL error occurred';
+$string['jsonerror'] = 'Failed to decode JSON response';
+$string['apierror'] = 'OpenAI API error';
+$string['invalidmethod'] = 'Unsupported HTTP method';

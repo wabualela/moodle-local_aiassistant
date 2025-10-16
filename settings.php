@@ -76,6 +76,27 @@ if ($hassiteconfig) {
         get_string('integrationheading_desc', 'local_aiassistant')
     ));
 
+    // API mode selection.
+    $settings->add(new admin_setting_configselect(
+        'local_aiassistant/apimode',
+        get_string('apimode', 'local_aiassistant'),
+        get_string('apimode_desc', 'local_aiassistant'),
+        'completion',
+        [
+            'completion' => get_string('apimode_completion', 'local_aiassistant'),
+            'assistant' => get_string('apimode_assistant', 'local_aiassistant'),
+        ]
+    ));
+
+    // Assistant ID (for Assistants API) - with assistants dropdown.
+    $settings->add(new \local_aiassistant\admin_setting_assistant_id(
+        'local_aiassistant/assistantid',
+        get_string('assistantid', 'local_aiassistant'),
+        get_string('assistantid_desc', 'local_aiassistant'),
+        ''
+    ));
+
+    // System prompt (for Completion API).
     $settings->add(new admin_setting_configtextarea(
         'local_aiassistant/prompt',
         get_string('prompt', 'local_aiassistant'),
