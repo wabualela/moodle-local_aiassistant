@@ -76,7 +76,6 @@ class get_completion extends external_api {
 
         $context = context_system::instance();
         self::validate_context($context);
-        require_capability('local/aiassistant:view', $context);
 
         // Check if assistant is enabled.
         if (!get_config('local_aiassistant', 'enable')) {
