@@ -26,12 +26,15 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
     'local/aiassistant:view' => [
+        'riskbitmask'  => RISK_PERSONAL,
         'captype'      => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
-            'user'    => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher'        => CAP_ALLOW,
+            'student'        => CAP_ALLOW,
+            'user'           => CAP_ALLOW
         ],
     ],
 ];
