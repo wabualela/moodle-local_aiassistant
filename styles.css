@@ -355,7 +355,7 @@
     }
 
     .local-aiassistant-fab-wrapper {
-        inset-inline-end: 10px; /* Reduce spacing on mobile */
+        inset-inline-end: 80px; /* Reduce spacing on mobile */
         bottom: 10px;
     }
 }
@@ -393,4 +393,5 @@
     border-width: 0;
 
 }
+
 
