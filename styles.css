@@ -34,6 +34,8 @@
     inset-inline-end: 20px; /* RTL-friendly positioning - switched to right side with 80px spacing */
     flex-direction: row;
     transition: var(--aiassistant-transition);
+    border-radius: 999px;
+    border: solid 2px #fff;
 }
 
 .local-aiassistant-fab {
@@ -393,6 +395,7 @@
     border-width: 0;
 
 }
+
 
 
 
